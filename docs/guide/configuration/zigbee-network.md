@@ -4,24 +4,11 @@ sidebarDepth: 1
 
 # Zigbee network
 
-## Permit join
-
-```yaml
-# Optional: allow new devices to join.
-permit_join: true
-```
-
-::: warning ATTENTION
-It's important to disable `permit_join` after you've peered your devices. This keeps the Zigbee
-network safe and prevents accidental joining of other Zigbee devices. When a device joins, the coordinator exposes the
-network key.
-:::
-
 ## Network config
 
 ```yaml
 advanced:
-    # Optional: ZigBee pan ID (default: shown below)
+    # Optional: Zigbee pan ID (default: shown below)
     # Setting pan_id: GENERATE will make Zigbee2MQTT generate a new panID on next startup
     pan_id: 0x1a62
     # Optional: Zigbee extended pan ID, GENERATE will make Zigbee2MQTT generate a new extended panID on next startup (default: shown below)
@@ -36,12 +23,16 @@ advanced:
 ```
 
 ::: tip
-Set `network_key: GENERATE` to let Zigbee2MQTT generate a new random key on the first start. The `configuration.yml` gets updated with the new key. Changing the network_key requires repairing of all devices.
+Set `network_key: GENERATE` to let Zigbee2MQTT generate a new random key on the first start. The `configuration.yml` gets updated with the new key. Changing the network_key requires re-pairing of all devices.
 :::
 
 ::: tip
 [Reduce Wi-Fi interference by changing the Zigbee channel](../../advanced/zigbee/02_improve_network_range_and_stability.md#reduce-wi-fi-interference-by-changing-the-zigbee-channel)
 :::
+
+### Configurator
+
+<Configurator />
 
 ### Changing the Zigbee channel
 

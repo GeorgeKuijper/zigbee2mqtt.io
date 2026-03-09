@@ -18,7 +18,7 @@ pageClass: device-page
 | Model | PEHPL0X  |
 | Vendor  | [Perenio](/supported-devices/#v=Perenio)  |
 | Description | Power link |
-| Exposes | switch (state), default_on_off_state, rms_voltage, active_power, consumed_energy, alarm_voltage_min, alarm_voltage_max, alarm_power_max, alarm_consumed_energy, voltage_min, voltage_max, power_max, consumed_energy_limit, rssi, linkquality |
+| Exposes | switch (state), default_on_off_state, rms_voltage, active_power, consumed_energy, alarm_voltage_min, alarm_voltage_max, alarm_power_max, alarm_consumed_energy, voltage_min, voltage_max, power_max, consumed_energy_limit, rssi |
 | Picture | ![Perenio PEHPL0X](https://www.zigbee2mqtt.io/images/devices/PEHPL0X.png) |
 
 
@@ -73,7 +73,7 @@ The unit of this value is `W`.
 Consumed energy.
 Value can be found in the published state on the `consumed_energy` property.
 It's not possible to read (`/get`) or write (`/set`) this value.
-The unit of this value is `W*h`.
+The unit of this value is `Wh`.
 
 ### Alarm voltage min (binary)
 Indicates if the alarm is triggered on the voltage drop below the limit, allows to reset alarms.
@@ -137,11 +137,4 @@ Value can be found in the published state on the `rssi` property.
 It's not possible to read (`/get`) or write (`/set`) this value.
 The minimal value is `-128` and the maximum value is `127`.
 The unit of this value is `dB`.
-
-### Linkquality (numeric)
-Link quality (signal strength).
-Value can be found in the published state on the `linkquality` property.
-It's not possible to read (`/get`) or write (`/set`) this value.
-The minimal value is `0` and the maximum value is `255`.
-The unit of this value is `lqi`.
 

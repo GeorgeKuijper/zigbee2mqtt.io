@@ -18,7 +18,7 @@ pageClass: device-page
 | Model | TYZGTH4CH-D1RF  |
 | Vendor  | [Mumubiz](/supported-devices/#v=Mumubiz)  |
 | Description | 4 channel changeover contact with temperature and humidity sensing |
-| Exposes | switch (state), countdown, power_on_behavior, temperature, humidity, linkquality |
+| Exposes | switch (state), countdown, power_on_behavior, temperature, humidity |
 | Picture | ![Mumubiz TYZGTH4CH-D1RF](https://www.zigbee2mqtt.io/images/devices/TYZGTH4CH-D1RF.png) |
 
 
@@ -45,11 +45,11 @@ and a DS18B20 style temperature probe is also offered in a bundle.
 
 * `temperature_calibration`: Calibrates the temperature value (absolute offset), takes into effect on next report of device. The value must be a number.
 
-* `temperature_precision`: Number of digits after decimal point for temperature, takes into effect on next report of device. This option can only decrease the precision, not increase it. The value must be a number with a minimum value of `0` and with a with a maximum value of `3`
+* `temperature_precision`: Number of digits after decimal point for temperature, takes into effect on next report of device. This option can only decrease the precision, not increase it. The value must be a number with a minimum value of `0` and with a maximum value of `3`
 
 * `humidity_calibration`: Calibrates the humidity value (absolute offset), takes into effect on next report of device. The value must be a number.
 
-* `humidity_precision`: Number of digits after decimal point for humidity, takes into effect on next report of device. This option can only decrease the precision, not increase it. The value must be a number with a minimum value of `0` and with a with a maximum value of `3`
+* `humidity_precision`: Number of digits after decimal point for humidity, takes into effect on next report of device. This option can only decrease the precision, not increase it. The value must be a number with a minimum value of `0` and with a maximum value of `3`
 
 * `state_action`: State actions will also be published as 'action' when true (default false). The value must be `true` or `false`
 
@@ -109,28 +109,28 @@ The minimal value is `0` and the maximum value is `43200`.
 The unit of this value is `s`.
 
 ### Power-on behavior (enum, l1 endpoint)
-Controls the behavior when the device is powered on after power loss. If you get an `UNSUPPORTED_ATTRIBUTE` error, the device does not support it..
+Controls the behavior when the device is powered on after power loss.
 Value can be found in the published state on the `power_on_behavior_l1` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"power_on_behavior_l1": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"power_on_behavior_l1": NEW_VALUE}`.
 The possible values are: `off`, `previous`, `on`.
 
 ### Power-on behavior (enum, l2 endpoint)
-Controls the behavior when the device is powered on after power loss. If you get an `UNSUPPORTED_ATTRIBUTE` error, the device does not support it..
+Controls the behavior when the device is powered on after power loss.
 Value can be found in the published state on the `power_on_behavior_l2` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"power_on_behavior_l2": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"power_on_behavior_l2": NEW_VALUE}`.
 The possible values are: `off`, `previous`, `on`.
 
 ### Power-on behavior (enum, l3 endpoint)
-Controls the behavior when the device is powered on after power loss. If you get an `UNSUPPORTED_ATTRIBUTE` error, the device does not support it..
+Controls the behavior when the device is powered on after power loss.
 Value can be found in the published state on the `power_on_behavior_l3` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"power_on_behavior_l3": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"power_on_behavior_l3": NEW_VALUE}`.
 The possible values are: `off`, `previous`, `on`.
 
 ### Power-on behavior (enum, l4 endpoint)
-Controls the behavior when the device is powered on after power loss. If you get an `UNSUPPORTED_ATTRIBUTE` error, the device does not support it..
+Controls the behavior when the device is powered on after power loss.
 Value can be found in the published state on the `power_on_behavior_l4` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"power_on_behavior_l4": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"power_on_behavior_l4": NEW_VALUE}`.
@@ -147,11 +147,4 @@ Measured relative humidity.
 Value can be found in the published state on the `humidity` property.
 It's not possible to read (`/get`) or write (`/set`) this value.
 The unit of this value is `%`.
-
-### Linkquality (numeric)
-Link quality (signal strength).
-Value can be found in the published state on the `linkquality` property.
-It's not possible to read (`/get`) or write (`/set`) this value.
-The minimal value is `0` and the maximum value is `255`.
-The unit of this value is `lqi`.
 
