@@ -8,10 +8,11 @@ const access = {
 };
 
 export function generateExpose(definition) {
+    const manufacturerName = definition.whiteLabelFingerprint?.[0].manufacturerName;
     return `
 ## Exposes
 
-${(typeof definition.exposes === 'function' ? definition.exposes() : definition.exposes).map((e) => getExposeDocs(e, definition)).join('\n\n')}
+${(typeof definition.exposes === 'function' ? definition.exposes({isDummyDevice: true, manufacturerName}, {}) : definition.exposes).map((e) => getExposeDocs(e, definition)).join('\n\n')}
 `;
 }
 
@@ -25,8 +26,8 @@ function uncapitalizeFirstLetter(string) {
 
 function compositeDocs(composite) {
     const value = `{${composite.features.map((e) => `"${e.property}": VALUE`).join(', ')}}`;
+    const note: string[] = [];
 
-    let note = [];
     for (const feature of composite.features) {
         let ft = '';
         if (feature.type === 'binary') {
@@ -41,7 +42,7 @@ function compositeDocs(composite) {
             ]
                 .filter((e) => e)
                 .join(', ');
-        } else if (feature.type === 'text' || feature.type === 'list') {
+        } else if (feature.type === 'text' || feature.type === 'list' || feature.type === 'composite') {
             // do nothing on purpose
         } else {
             throw new Error(`Unsupported composite feature: ${feature.type}`);
@@ -53,8 +54,8 @@ function compositeDocs(composite) {
 }
 
 function getExposeDocs(expose, definition) {
-    const lines = [];
-    const title = [];
+    const lines: string[] = [];
+    const title: string[] = [];
 
     const onWithTimedOff = () => {
         lines.push(``);
@@ -128,33 +129,36 @@ function getExposeDocs(expose, definition) {
         }
     } else if (['switch', 'lock', 'cover', 'fan'].includes(expose.type)) {
         const state = expose.features.find((e) => e.name === 'state');
-        const stateStr = expose.type === 'cover' ? `(value is \`OPEN\` or \`CLOSE\`)` : `(value is \`${state.value_on}\` or \`${state.value_off}\`)`;
-        lines.push(`The current state of this ${expose.type} is in the published state under the \`${state.property}\` property ${stateStr}.`);
+        if (state) {
+            const stateStr =
+                expose.type === 'cover' ? `(value is \`OPEN\` or \`CLOSE\`)` : `(value is \`${state.value_on}\` or \`${state.value_off}\`)`;
+            lines.push(`The current state of this ${expose.type} is in the published state under the \`${state.property}\` property ${stateStr}.`);
 
-        if (state.access & access.SET) {
-            if (expose.type === 'switch') {
+            if (state.access & access.SET) {
+                if (expose.type === 'switch') {
+                    lines.push(
+                        `To control this ${expose.type} publish a message to topic \`zigbee2mqtt/FRIENDLY_NAME/set\` with payload \`{"${state.property}": "${state.value_on}"}\`, \`{"${state.property}": "${state.value_off}"}\` or \`{"${state.property}": "${state.value_toggle}"}\`.`,
+                    );
+                } else if (state.type === 'enum') {
+                    lines.push(
+                        `To control this ${expose.type} publish a message to topic \`zigbee2mqtt/FRIENDLY_NAME/set\` with payload ${state.values.map((v) => `\`{"${state.property}": "${v}"}\``).join(', ')}.`,
+                    );
+                } else {
+                    lines.push(
+                        `To control this ${expose.type} publish a message to topic \`zigbee2mqtt/FRIENDLY_NAME/set\` with payload \`{"${state.property}": "${state.value_on}"}\` or \`{"${state.property}": "${state.value_off}"}\`.`,
+                    );
+                }
+            } else {
+                lines.push(`It's not possible to write (\`/set\`) this value.`);
+            }
+
+            if (state.access & access.GET) {
                 lines.push(
-                    `To control this ${expose.type} publish a message to topic \`zigbee2mqtt/FRIENDLY_NAME/set\` with payload \`{"${state.property}": "${state.value_on}"}\`, \`{"${state.property}": "${state.value_off}"}\` or \`{"${state.property}": "${state.value_toggle}"}\`.`,
-                );
-            } else if (state.type === 'enum') {
-                lines.push(
-                    `To control this ${expose.type} publish a message to topic \`zigbee2mqtt/FRIENDLY_NAME/set\` with payload ${state.values.map((v) => `\`{"${state.property}": "${v}"}\``).join(', ')}.`,
+                    `To read the current state of this ${expose.type} publish a message to topic \`zigbee2mqtt/FRIENDLY_NAME/get\` with payload \`{"${state.property}": ""}\`.`,
                 );
             } else {
-                lines.push(
-                    `To control this ${expose.type} publish a message to topic \`zigbee2mqtt/FRIENDLY_NAME/set\` with payload \`{"${state.property}": "${state.value_on}"}\` or \`{"${state.property}": "${state.value_off}"}\`.`,
-                );
+                lines.push(`It's not possible to read (\`/get\`) this value.`);
             }
-        } else {
-            lines.push(`It's not possible to write (\`/set\`) this value.`);
-        }
-
-        if (state.access & access.GET) {
-            lines.push(
-                `To read the current state of this ${expose.type} publish a message to topic \`zigbee2mqtt/FRIENDLY_NAME/get\` with payload \`{"${state.property}": ""}\`.`,
-            );
-        } else {
-            lines.push(`It's not possible to read (\`/get\`) this value.`);
         }
 
         const on_time = definition.toZigbee.find((t) => t.key?.includes('on_time'));
@@ -271,7 +275,7 @@ function getExposeDocs(expose, definition) {
                     `\n**NOTE**: brightness move/step will stop at the minimum brightness and won't turn on the light when it's off. In this case use \`brightness_move_onoff\`/\`brightness_step_onoff\``,
                 );
             }
-            lines.push(`\`\`\`\`js`);
+            lines.push(`\`\`\`js`);
             lines.push(`{`);
             if (brightness) {
                 lines.push(`  "brightness_move": -40, // Starts moving brightness down at 40 units per second`);
@@ -280,7 +284,14 @@ function getExposeDocs(expose, definition) {
             }
             if (colorTemp) {
                 lines.push(`  "color_temp_move": 60, // Starts moving color temperature up at 60 units per second`);
+                lines.push(`  "color_temp_move": -40, // Starts moving color temperature down at 40 units per second`);
                 lines.push(`  "color_temp_move": "stop", // Stop moving color temperature`);
+                lines.push(`  "color_temp_move": "release", // Stop moving color temperature`);
+                lines.push(`  "color_temp_move": 0, // Stop moving color temperature`);
+                lines.push(`  "color_temp_move": "up", // Move to warmer color temperature at default rate`);
+                lines.push(`  "color_temp_move": 1, // Move to warmer color temperature at default rate`);
+                lines.push(`  "color_temp_move": "down", // Move to cooler color temperature at default rate`);
+                lines.push(`  "color_temp_move": {"rate": 30, "minimum": 150, "maximum": 500}, // Move with custom rate and constraints`);
                 lines.push(`  "color_temp_step": 99, // Increase color temperature by 99`);
             }
             if (colorHS) {
@@ -362,9 +373,11 @@ function getExposeDocs(expose, definition) {
         if (expose.description) {
             lines.push(expose.description + '.');
         }
-        let txt = {value: '', note: []};
+        let txt: {value: string; note: string[]} = {value: '', note: []};
         if (expose.item_type.type === 'composite') {
             txt = compositeDocs(expose.item_type);
+        } else if (expose.item_type.type === 'enum') {
+            txt['value'] = expose.item_type.values.map((v) => `"${v}"`).join(', ');
         } else if (expose.item_type.type === 'text') {
             // Empty on purpose
         } else {

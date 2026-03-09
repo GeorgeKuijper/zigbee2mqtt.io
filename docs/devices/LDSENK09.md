@@ -18,13 +18,14 @@ pageClass: device-page
 | Model | LDSENK09  |
 | Vendor  | [ADEO](/supported-devices/#v=ADEO)  |
 | Description | Security system key fob |
-| Exposes | action, linkquality |
+| Exposes | action |
 | Picture | ![ADEO LDSENK09](https://www.zigbee2mqtt.io/images/devices/LDSENK09.png) |
 
 
 <!-- Notes BEGIN: You can edit here. Add "## Notes" headline if not already present. -->
-
-
+### Pairing
+The remote will automatically start pairing first time you connect battery.
+To manually reset/pair, press together the `disarm` (bottom-left) and `arm_day_zones` (top-right) for 3 seconds, release when the LED starts to blink.
 <!-- Notes END: Do not edit below this line -->
 
 
@@ -37,11 +38,4 @@ Triggered action (e.g. a button click).
 Value can be found in the published state on the `action` property.
 It's not possible to read (`/get`) or write (`/set`) this value.
 The possible values are: `panic`, `disarm`, `arm_partial_zones`, `arm_all_zones`.
-
-### Linkquality (numeric)
-Link quality (signal strength).
-Value can be found in the published state on the `linkquality` property.
-It's not possible to read (`/get`) or write (`/set`) this value.
-The minimal value is `0` and the maximum value is `255`.
-The unit of this value is `lqi`.
 

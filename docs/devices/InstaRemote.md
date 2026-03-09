@@ -17,8 +17,8 @@ pageClass: device-page
 |-----|-----|
 | Model | InstaRemote  |
 | Vendor  | [Insta](/supported-devices/#v=Insta)  |
-| Description | ZigBee Light Link wall/handheld transmitter |
-| Exposes | action, linkquality |
+| Description | Zigbee Light Link wall/handheld transmitter |
+| Exposes | action |
 | Picture | ![Insta InstaRemote](https://www.zigbee2mqtt.io/images/devices/InstaRemote.png) |
 | White-label | Gira 2430-100, Gira 2435-10, Jung ZLLCD5004M, Jung ZLLLS5004M, Jung ZLLA5004M, Jung ZLLHS4 |
 
@@ -27,10 +27,10 @@ pageClass: device-page
 ## Notes
 
 
-### Transmitters Loosing Connection in ZigBee 3 Networks
-With their factory firmware, the transmitters loose network connection after a few hours when ZigBee 3 devices are present in the network (which is a pretty much standard nowadays). For the Jung wall and handheld transmitters there is a firmware update available that fixes this problem (see [OTA updates](#ota-updates) below), but in turn decreases battery lifetime down to a few months.
+### Transmitters Loosing Connection in Zigbee 3 Networks
+With their factory firmware, the transmitters loose network connection after a few hours when Zigbee 3 devices are present in the network (which is a pretty much standard nowadays). For the Jung wall and handheld transmitters there is a firmware update available that fixes this problem (see [OTA updates](#ota-updates) below), but in turn decreases battery lifetime down to a few months.
 
-Unfortunately Gira seems to have dropped support for their ZigBee transmitters completely and does not offer any firmware updates at all. For the Gira handheld transmitter the Jung update seems to work (and to fix the problem), but for the Gira wall transmitter this is not the case (it only has 6 buttons instead of 8 on the Jung wall transmitter and would therefore need a different firmware). There does not seem to be real solution for this problem rendering the Gira wall transmitters pretty much useless nowadays.
+Unfortunately Gira seems to have dropped support for their Zigbee transmitters completely and does not offer any firmware updates at all. For the Gira handheld transmitter the Jung update seems to work (and to fix the problem), but for the Gira wall transmitter this is not the case (it only has 6 buttons instead of 8 on the Jung wall transmitter and would therefore need a different firmware). There does not seem to be real solution for this problem rendering the Gira wall transmitters pretty much useless nowadays.
 
 ### Factory Reset (8-Button Devices)
 * Press and hold buttons `3` and `4` simultaneously for about 10 seconds until the green LEDs start to flash.
@@ -57,7 +57,12 @@ This device supports OTA updates, for more information see [OTA updates](../guid
 ## Options
 *[How to use device type specific configuration](../guide/configuration/devices-groups.md#specific-device-options)*
 
-* `legacy`: Set to false to disable the legacy integration (highly recommended), will change structure of the published payload (default true). The value must be `true` or `false`
+* `simulated_brightness`: Simulate a brightness value. If this device provides a brightness_move_up or brightness_move_down action it is possible to specify the update interval and delta. The action_brightness_delta indicates the delta for each interval. Example:
+```yaml
+simulated_brightness:
+  delta: 20 # delta per interval, default = 20
+  interval: 200 # interval in milliseconds, default = 200
+```
 
 
 ## Exposes
@@ -67,11 +72,4 @@ Triggered action (e.g. a button click).
 Value can be found in the published state on the `action` property.
 It's not possible to read (`/get`) or write (`/set`) this value.
 The possible values are: `select_0`, `select_1`, `select_2`, `select_3`, `select_4`, `select_5`, `on`, `off`, `down`, `up`, `stop`.
-
-### Linkquality (numeric)
-Link quality (signal strength).
-Value can be found in the published state on the `linkquality` property.
-It's not possible to read (`/get`) or write (`/set`) this value.
-The minimal value is `0` and the maximum value is `255`.
-The unit of this value is `lqi`.
 

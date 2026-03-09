@@ -16,13 +16,18 @@ advanced:
     log_namespaced_levels:
         z2m:mqtt: warning
     # Optional: log timestamp format (default: shown below)
+    # See https://github.com/taylorhakes/fecha?tab=readme-ov-file#formatting-tokens for all supported tokens.
     timestamp_format: 'YYYY-MM-DD HH:mm:ss'
     # Optional: Location of log directory (default: shown below)
     log_directory: data/log/%TIMESTAMP%
+    # Optional: Number of log directories to keep before deleting the oldest one (default: shown below)
+    log_directories_to_keep: 10
     # Optional: Log file name, can also contain timestamp, e.g.: zigbee2mqtt_%TIMESTAMP%.log (default: shown below)
     log_file: log.txt
     # Optional: Rotate log every 10MB around 3 files (default: true)
     log_rotation: true
+    # Optional: format the 'console' output as structured JSON instead of colored plain text.
+    log_console_json: false
     # Optional: Output location of the log (default: shown below), leave empty to suppress logging (log_output: [])
     # possible options: 'console', 'file', 'syslog'
     log_output:
@@ -67,9 +72,9 @@ advanced:
         zhc:legacy:fz: debug
 ```
 
--   `zhc` and below namespaces will be logged as `info` (examples: `zhc`, `zhc:ota:common`, `zhc:legacy:tz`)
--   `zhc:legacy:fz` and below namespaces will be logged as `debug` (examples: `zhc:legacy:fz`, `zhc:legacy:fz:tuya`)
--   Other unspecified namespaces will use `log_level`, in this case, `warning` (examples: `z2m:mqtt`, `zh:zstack`)
+- `zhc` and below namespaces will be logged as `info` (examples: `zhc`, `zhc:ota:common`, `zhc:legacy:tz`)
+- `zhc:legacy:fz` and below namespaces will be logged as `debug` (examples: `zhc:legacy:fz`, `zhc:legacy:fz:tuya`)
+- Other unspecified namespaces will use `log_level`, in this case, `warning` (examples: `z2m:mqtt`, `zh:zstack`)
 
 ## Debugging
 
@@ -81,11 +86,20 @@ advanced:
     log_level: debug
 ```
 
+If you are debugging an issue and want complete logs from Zigbee2MQTT startup, remember to turn off `log_rotation` and turn on logging to file by adding the following in your `configuration.yaml`:
+
+```yaml
+advanced:
+    log_rotation: false
+    log_output:
+        - file
+```
+
 In the logging you will see the following abbreviations:
 
--   `z2m`: Zigbee2MQTT
--   `zh`: [zigbee-herdsman](https://github.com/koenkk/zigbee-herdsman), logged events from the Zigbee library used by Zigbee2MQTT.
--   `zhc`: [zigbee-herdsman-converters](https://github.com/koenkk/zigbee-herdsman-converters), logged events from the devices support library.
+- `z2m`: Zigbee2MQTT
+- `zh`: [zigbee-herdsman](https://github.com/koenkk/zigbee-herdsman), logged events from the Zigbee library used by Zigbee2MQTT.
+- `zhc`: [zigbee-herdsman-converters](https://github.com/koenkk/zigbee-herdsman-converters), logged events from the devices support library.
 
 To change log level at runtime, use the frontend or [MQTT](../usage/mqtt_topics_and_messages.md)
 
@@ -106,8 +120,8 @@ Examples:
 
 Filter out log namespaces starting with:
 
--   `zhc:legacy:fz:tuya`
--   or `zhc:legacy:fz:moes`
+- `zhc:legacy:fz:tuya`
+- or `zhc:legacy:fz:moes`
 
 ```yaml
 advanced:
@@ -116,10 +130,10 @@ advanced:
 
 Filter out log namespaces starting with:
 
--   `zhc:legacy:fz:tuya`
--   or `zhc:legacy:fz:moes`
--   or `zh:ember:uart:` (any namespace below `uart`)
--   or `zh:controller` (any namespace below `controller` and `controller` itself)
+- `zhc:legacy:fz:tuya`
+- or `zhc:legacy:fz:moes`
+- or `zh:ember:uart:` (any namespace below `uart`)
+- or `zh:controller` (any namespace below `controller` and `controller` itself)
 
 ```yaml
 advanced:
